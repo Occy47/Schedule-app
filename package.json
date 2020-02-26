@@ -2,7 +2,7 @@
   "name": "scheduler-app",
   "version": "0.1.0",
   "private": true,
-  "onandroid": "node node_modules/react-scripts/scripts/start.js",
+  "homepage": "https://occy47.github.io/Schedule-app/",
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.4.0",
@@ -11,6 +11,7 @@
     "browserify-fs": "^1.0.0",
     "cldr-data": "^36.0.0",
     "express": "^4.17.1",
+    "git": "^0.1.5",
     "globalize": "^1.4.2",
     "iana-tz-data": "^2019.1.0",
     "moment": "^2.24.0",
@@ -28,7 +29,8 @@
     "stop": "taskkill -F -IM node.exe",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -46,6 +48,7 @@
     ]
   },
   "devDependencies": {
+    "gh-pages": "^2.2.0",
     "nodemon": "^2.0.2"
   }
 }
