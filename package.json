@@ -2,6 +2,7 @@
   "name": "scheduler-app",
   "version": "0.1.0",
   "private": true,
+  "onandroid": "node node_modules/react-scripts/scripts/start.js",
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.4.0",
