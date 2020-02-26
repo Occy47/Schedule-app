@@ -1,0 +1,36 @@
+.vaccant {
+  min-height: 100%;
+  width: 100%;
+  color: white;
+  font-size: 110px;
+  background-color: green;
+  position: fixed;
+}
+
+.occupied {
+  min-height: 100%;
+  width: 100%;
+  color: white;
+  font-size: 110px;
+  background-color: red;
+  position: fixed;
+}
+
+.image-vaccant {
+  grid-column-start: 3;
+  grid-row-start: 2;
+}
+
+.image-occpied {
+  grid-column-start: 2;
+  grid-column-end: 2;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: auto 181px 532px 181px auto;
+  grid-template-rows: 300px 171px 300px auto;
+}
+
+.btn {
+}
