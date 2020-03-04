@@ -1,5 +1,6 @@
 import React from "react";
 import moment from "moment";
+import { withFirebase } from "../../../firebase";
 import uuid from "uuid";
 import { Link } from "react-router-dom";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
@@ -32,7 +33,7 @@ class MyCalendar extends React.Component {
   }
 
   callAPIfetchEvents() {
-    fetch("http://localhost:9000/API/events")
+    fetch("http://localhost:8080/API/events")
       .then(res => res.json())
       .then(res => {
         let events = res.events;
@@ -52,7 +53,7 @@ class MyCalendar extends React.Component {
   callAPIaddEvent(title, start, end) {
     var id = uuid();
     var url =
-      "http://localhost:9000/API/events/add/" +
+      "http://localhost:8080/API/events/add/" +
       id +
       "/" +
       title +
@@ -68,7 +69,7 @@ class MyCalendar extends React.Component {
   }
 
   callAPIdeleteEvent(id) {
-    var url = "http://localhost:9000/API/events/delete/" + id;
+    var url = "http://localhost:8080/API/events/delete/" + id;
     fetch(url)
       .then(res => res.json())
       .catch(function(error) {
@@ -155,12 +156,29 @@ class MyCalendar extends React.Component {
 
   render() {
     const localizer = momentLocalizer(moment);
-    // console.log(this.state.events);
-    // console.log(Date());
-    console.log(this.state.modalTitle);
-    console.log(this.state.events);
     return (
       <div>
+        <Row>
+          <Col span={10}></Col>
+          <Col span={8}></Col>
+          <Col span={2}>
+            <Button type="primary" style={{ width: "100%" }}>
+              <Link to="/home">Back</Link>
+            </Button>
+          </Col>
+          <Col span={2}>
+            <Button type="primary" style={{ width: "100%" }}>
+              <Link to="/password-change"> Edit </Link>
+            </Button>
+          </Col>
+          <Col span={2}>
+            <Button type="primary" style={{ width: "100%" }}>
+              <Link to="/" onClick={this.props.firebase.doSignOut}>
+                Sign out
+              </Link>
+            </Button>
+          </Col>
+        </Row>
         <Calendar
           style={{ height: "600px" }}
           selectable
@@ -173,18 +191,8 @@ class MyCalendar extends React.Component {
           onSelectEvent={event => this.showModal(event.title, event.id)}
           onSelectSlot={this.handleSelect}
         />
-        <Row type="flex">
-          <Col span={7}></Col>
-          <Col span={7}></Col>
-          <Col span={8}></Col>
-          <Col span={2}>
-            <Button type="primary">
-              <Link to="/">Back</Link>
-            </Button>
-          </Col>
-        </Row>
         <Modal
-          title={this.state.modalTitle}
+          title="Sastanak"
           visible={this.state.modalVisibility}
           onOk={this.handleDelete}
           cancelText={"Close"}
@@ -192,11 +200,11 @@ class MyCalendar extends React.Component {
           onCancel={this.handleClose}
           key={this.state.eventId}
         >
-          <p>Some contents...</p>
+          <p>{this.state.modalTitle}</p>
         </Modal>
       </div>
     );
   }
 }
 
-export default MyCalendar;
+export default withFirebase(MyCalendar);

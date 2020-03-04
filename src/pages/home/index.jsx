@@ -38,7 +38,7 @@ class Home extends React.Component {
   }
 
   callAPI() {
-    fetch("http://localhost:9000/API/events")
+    fetch("http://localhost:8080/API/events")
       .then(res => res.json())
       .then(res => {
         let events = res.events;

@@ -5,6 +5,8 @@ import * as ROUTES from "../constants/routes";
 import HomePage from "./home";
 import SchedulerPage from "./scheduler";
 import { Layout } from "antd";
+import LogIn from "./login";
+import PasswordChange from "./passwordChange";
 
 class App extends React.Component {
   constructor(props) {
@@ -13,7 +15,7 @@ class App extends React.Component {
   }
 
   callAPI() {
-    fetch("http://localhost:9000/API")
+    fetch("http://localhost:8080/API")
       .then(res => res.text())
       .then(res => this.setState({ apiResponse: res }));
   }
@@ -26,8 +28,10 @@ class App extends React.Component {
       <div>
         <Layout>
           <Router>
+            <Route exact path={ROUTES.LOGIN} component={LogIn} />
             <Route exact path={ROUTES.HOME} component={HomePage} />
             <Route path={ROUTES.SCHEDULER} component={SchedulerPage} />
+            <Route path={ROUTES.PASSWORDCHANGE} component={PasswordChange} />
           </Router>
         </Layout>
       </div>
