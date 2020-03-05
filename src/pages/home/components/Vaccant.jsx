@@ -15,8 +15,7 @@ class Vaccant extends React.Component {
   render() {
     return (
       <Content style={{ background: "green" }}>
-        <Row type="flex" style={{ height: "80px" }}></Row>
-        <Row type="flex" style={{ height: "180px" }}></Row>
+        <Row type="flex" style={{ height: "220px" }}></Row>
         <Row type="flex">
           <Col span={7}></Col>
           <Col span={6}>
@@ -30,8 +29,8 @@ class Vaccant extends React.Component {
           <Col span={5}></Col>
           <Col span={5}></Col>
         </Row>
-        <Row type="flex" style={{ height: "125px" }}></Row>
-        <Row type="flex" style={{ height: "8px" }}>
+        <Row style={{ height: "70px" }}></Row>
+        <Row style={{ height: "32px" }}>
           <Col span={7}></Col>
           <Col span={7}></Col>
           <Col span={6}></Col>
@@ -41,6 +40,7 @@ class Vaccant extends React.Component {
             </Button>
           </Col>
         </Row>
+        <Row style={{ height: "71px" }}></Row>
       </Content>
     );
   }

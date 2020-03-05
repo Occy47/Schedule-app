@@ -7,6 +7,12 @@ import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { Button, Row, Col, Modal } from "antd";
 
+const prodServerAddress = process.env.REACT_APP_PROD_SERVER_NAME;
+const devServerAddress = process.env.REACT_APP_DEV_SERVER_NAME;
+
+const serverAddress =
+  process.env.NODE_ENV === "production" ? prodServerAddress : devServerAddress;
+
 class MyCalendar extends React.Component {
   constructor(props) {
     super(props);
@@ -33,7 +39,7 @@ class MyCalendar extends React.Component {
   }
 
   callAPIfetchEvents() {
-    fetch("http://localhost:8080/API/events")
+    fetch(serverAddress + "/api/events")
       .then(res => res.json())
       .then(res => {
         let events = res.events;
@@ -53,7 +59,8 @@ class MyCalendar extends React.Component {
   callAPIaddEvent(title, start, end) {
     var id = uuid();
     var url =
-      "http://localhost:8080/API/events/add/" +
+      serverAddress +
+      "/api/events/add/" +
       id +
       "/" +
       title +
@@ -69,7 +76,7 @@ class MyCalendar extends React.Component {
   }
 
   callAPIdeleteEvent(id) {
-    var url = "http://localhost:8080/API/events/delete/" + id;
+    var url = serverAddress + "/api/events/delete/" + id;
     fetch(url)
       .then(res => res.json())
       .catch(function(error) {

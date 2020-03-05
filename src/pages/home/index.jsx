@@ -5,6 +5,12 @@ import "antd/dist/antd.css";
 import "./home.css";
 import { Layout } from "antd";
 
+const prodServerAddress = process.env.REACT_APP_PROD_SERVER_NAME;
+const devServerAddress = process.env.REACT_APP_DEV_SERVER_NAME;
+
+const serverAddress =
+  process.env.NODE_ENV === "production" ? prodServerAddress : devServerAddress;
+
 class Home extends React.Component {
   constructor(props) {
     super(props);
@@ -38,7 +44,7 @@ class Home extends React.Component {
   }
 
   callAPI() {
-    fetch("http://localhost:8080/API/events")
+    fetch(serverAddress + "/api/events")
       .then(res => res.json())
       .then(res => {
         let events = res.events;
@@ -103,11 +109,7 @@ class Home extends React.Component {
   render() {
     const { vaccant } = this.state;
     console.log(this.state.events);
-    return (
-      <Layout style={{ height: "-webkit-fill-available" }}>
-        {vaccant ? <Vaccant /> : <Occupied />}
-      </Layout>
-    );
+    return <Layout>{vaccant ? <Vaccant /> : <Occupied />}</Layout>;
   }
 }
 

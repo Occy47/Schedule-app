@@ -16,8 +16,7 @@ class Occupied extends React.Component {
   render() {
     return (
       <Content style={{ background: "red" }}>
-        <Row type="flex" style={{ height: "100px" }}></Row>
-        <Row type="flex" style={{ height: "180px" }}></Row>
+        <Row type="flex" style={{ height: "220px" }}></Row>
         <Row type="flex">
           <Col span={4}></Col>
           <Col span={18}>
@@ -28,8 +27,8 @@ class Occupied extends React.Component {
           <Col span={1}></Col>
           <Col span={1}></Col>
         </Row>
-        <Row type="flex" style={{ height: "170px" }}></Row>
-        <Row type="flex" style={{ height: "8px" }}>
+        <Row style={{ height: "135px" }}></Row>
+        <Row style={{ height: "32px" }}>
           <Col span={7}></Col>
           <Col span={7}></Col>
           <Col span={6}></Col>
@@ -39,6 +38,7 @@ class Occupied extends React.Component {
             </Button>
           </Col>
         </Row>
+        <Row style={{ height: "71px" }}></Row>
       </Content>
     );
   }
