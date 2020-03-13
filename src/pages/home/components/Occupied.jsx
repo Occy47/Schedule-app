@@ -14,20 +14,32 @@ class Occupied extends React.Component {
   }
 
   render() {
+    const { title, start, end } = this.props;
     return (
       <Content style={{ background: "red" }}>
-        <Row type="flex" style={{ height: "220px" }}></Row>
+        <Row type="flex" style={{ height: "180px" }}></Row>
         <Row type="flex">
-          <Col span={4}></Col>
-          <Col span={18}>
-            <Text type="secondary" style={{ fontSize: "95px", color: "white" }}>
-              Sastanak u tijeku!
+          <Col span={5}></Col>
+          <Col span={14} style={{ textAlign: "center" }}>
+            <Text
+              type="secondary"
+              style={{ fontSize: "120px", color: "white" }}
+            >
+              Zauzeto
             </Text>
           </Col>
-          <Col span={1}></Col>
-          <Col span={1}></Col>
+          <Col span={5}></Col>
         </Row>
-        <Row style={{ height: "135px" }}></Row>
+        <Row>
+          <Col span={5}></Col>
+          <Col span={14} style={{ textAlign: "center" }}>
+            <Text type="secondary" style={{ fontSize: "25px", color: "white" }}>
+              {title} {start} - {end}
+            </Text>
+          </Col>
+          <Col span={5}></Col>
+        </Row>
+        <Row style={{ height: "100px" }}></Row>
         <Row style={{ height: "32px" }}>
           <Col span={7}></Col>
           <Col span={7}></Col>

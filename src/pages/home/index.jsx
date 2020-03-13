@@ -17,20 +17,17 @@ class Home extends React.Component {
     this.state = {
       events: [
         {
-          id: 0,
-          title: "0",
-          start: "0",
-          end: "0"
-        },
-        {
           id: 1,
-          title: "1",
-          start: "1",
-          end: "1"
+          title: "Long Event",
+          start: new Date(2019, 19, 2, 18, 0),
+          end: new Date(2019, 19, 2, 19, 0)
         }
       ],
       vaccant: true,
-      timeNow: 0
+      timeNow: 0,
+      currentEventTitle: "",
+      currentEventStart: "",
+      currentEventEnd: ""
     };
     this.setNowTimeToUnix = this.setNowTimeToUnix.bind(this);
     this.chechIfMeeting = this.chechIfMeeting.bind(this);
@@ -39,7 +36,6 @@ class Home extends React.Component {
 
   componentDidMount() {
     this.callAPI();
-
     this.interval = setInterval(() => this.setAndCheck(), 10000);
   }
 
@@ -62,10 +58,12 @@ class Home extends React.Component {
   }
 
   setAndCheck() {
+    this.callAPI();
     this.setNowTimeToUnix();
     const { timeNow, events } = this.state;
     events.map(event =>
       this.chechIfMeeting(
+        event.title,
         this.setTimeToUnix(event.start),
         this.setTimeToUnix(event.end),
         timeNow
@@ -98,8 +96,24 @@ class Home extends React.Component {
     return unixTime;
   }
 
-  chechIfMeeting(start, end, now) {
-    if (start < now && end > now) this.setState({ vaccant: false });
+  setUnixTimeToDate(unixTime) {
+    var timeStamp = new Date(unixTime * 1000);
+    var hour = timeStamp.getHours();
+    var min = ("0" + timeStamp.getMinutes()).slice(-2);
+
+    var dateTime = hour + ":" + min;
+
+    return dateTime;
+  }
+
+  chechIfMeeting(title, start, end, now) {
+    if (start < now && end > now)
+      this.setState({
+        vaccant: false,
+        currentEventTitle: title,
+        currentEventStart: start,
+        currentEventEnd: end
+      });
     else this.setState({ vaccant: true });
   }
 
@@ -107,9 +121,26 @@ class Home extends React.Component {
     clearInterval(this.interval);
   }
   render() {
-    const { vaccant } = this.state;
+    const {
+      vaccant,
+      currentEventTitle,
+      currentEventStart,
+      currentEventEnd
+    } = this.state;
     console.log(this.state.events);
-    return <Layout>{vaccant ? <Vaccant /> : <Occupied />}</Layout>;
+    return (
+      <Layout>
+        {vaccant ? (
+          <Vaccant />
+        ) : (
+          <Occupied
+            title={currentEventTitle}
+            start={this.setUnixTimeToDate(currentEventStart)}
+            end={this.setUnixTimeToDate(currentEventEnd)}
+          />
+        )}
+      </Layout>
+    );
   }
 }
 

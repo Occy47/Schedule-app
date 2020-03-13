@@ -17,8 +17,8 @@ class Vaccant extends React.Component {
       <Content style={{ background: "green" }}>
         <Row type="flex" style={{ height: "220px" }}></Row>
         <Row type="flex">
-          <Col span={7}></Col>
-          <Col span={6}>
+          <Col span={5}></Col>
+          <Col span={14} style={{ textAlign: "center" }}>
             <Title
               type="secondary"
               style={{ fontSize: "120px", color: "white" }}
@@ -26,7 +26,6 @@ class Vaccant extends React.Component {
               Slobodno
             </Title>
           </Col>
-          <Col span={5}></Col>
           <Col span={5}></Col>
         </Row>
         <Row style={{ height: "70px" }}></Row>
