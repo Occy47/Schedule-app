@@ -8,12 +8,15 @@ import { Link } from "react-router-dom";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { Button, Row, Col, Modal, TimePicker, Input } from "antd";
+import LoadingMessage from "./LoadingMessage";
 
 const prodServerAddress = process.env.REACT_APP_PROD_SERVER_NAME;
 const devServerAddress = process.env.REACT_APP_DEV_SERVER_NAME;
 
 const serverAddress =
   process.env.NODE_ENV === "production" ? prodServerAddress : devServerAddress;
+
+var checkServerStatusInterval;
 
 class MyCalendar extends React.Component {
   constructor(props) {
@@ -25,8 +28,8 @@ class MyCalendar extends React.Component {
           id: 1,
           title: "Long Event",
           start: new Date(2019, 19, 2, 18, 0),
-          end: new Date(2019, 19, 2, 19, 0)
-        }
+          end: new Date(2019, 19, 2, 19, 0),
+        },
       ],
       modalVisibility: false,
       modalTitle: "",
@@ -34,14 +37,19 @@ class MyCalendar extends React.Component {
       eventStart: new Date(2019, 19, 2, 18, 0),
       eventEnd: new Date(2019, 19, 2, 19, 0),
       scrollPosY: 0,
-      ticking: false
+      ticking: false,
+      isLoading: false,
+      serverStatus: "",
     };
+    this.checkServerStatus = this.checkServerStatus.bind(this);
+    this.runServerStatusInterval = this.runServerStatusInterval.bind(this);
   }
 
   componentDidMount() {
     this.callAPIfetchEvents();
     const scheduler = document.getElementById("scheduler-comp");
     scheduler.addEventListener("click", () => this.timerFunction(this.props));
+    this.runServerStatusInterval();
   }
 
   timerFunction() {
@@ -55,18 +63,18 @@ class MyCalendar extends React.Component {
 
   callAPIfetchEvents() {
     fetch(serverAddress + "/api/events")
-      .then(res => res.json())
-      .then(res => {
+      .then((res) => res.json())
+      .then((res) => {
         let events = res.events;
         for (let i = 0; i < events.length; i++) {
           events[i].start = new Date(events[i].start * 1000);
           events[i].end = new Date(events[i].end * 1000);
         }
         this.setState({
-          events: events
+          events: events,
         });
       })
-      .catch(function(error) {
+      .catch(function (error) {
         console.log(error);
       });
   }
@@ -84,8 +92,8 @@ class MyCalendar extends React.Component {
       "/" +
       end;
     fetch(url)
-      .then(res => res.json())
-      .catch(function(error) {
+      .then((res) => res.json())
+      .catch(function (error) {
         console.log(error);
       });
   }
@@ -102,8 +110,8 @@ class MyCalendar extends React.Component {
       "/" +
       end;
     fetch(url)
-      .then(res => res.json())
-      .catch(function(error) {
+      .then((res) => res.json())
+      .catch(function (error) {
         console.log(error);
       });
   }
@@ -111,10 +119,42 @@ class MyCalendar extends React.Component {
   callAPIdeleteEvent(id) {
     var url = serverAddress + "/api/events/delete/" + id;
     fetch(url)
-      .then(res => res.json())
-      .catch(function(error) {
+      .then((res) => res.json())
+      .catch(function (error) {
         console.log(error);
       });
+  }
+
+  checkServerStatus() {
+    if (this.state.isLoading === true) {
+      var url = serverAddress + "/api/status";
+      fetch(url)
+        .then((res) => res.json())
+        .then((res) => {
+          let status = res.status;
+          this.setState({ isLoading: JSON.parse(status) });
+        })
+        .catch(function (error) {
+          if (error === undefined) {
+            this.setState({ isLoading: true });
+          }
+          console.log(error);
+        });
+    } else {
+      clearInterval(checkServerStatusInterval);
+      this.setState({ isLoading: false });
+      console.log("interval stopped");
+    }
+  }
+
+  runServerStatusInterval() {
+    this.setState({ isLoading: true });
+
+    checkServerStatusInterval = setInterval(() => {
+      this.checkServerStatus();
+    }, 1000);
+
+    console.log("interval running");
   }
 
   setUnixTimeToDate(unixTime) {
@@ -151,13 +191,14 @@ class MyCalendar extends React.Component {
           {
             start,
             end,
-            title
-          }
-        ]
+            title,
+          },
+        ],
       });
     const unixStart = this.setTimeToUnix(start);
     const unixEnd = this.setTimeToUnix(end);
     this.callAPIaddEvent(title, unixStart, unixEnd);
+    this.runServerStatusInterval();
   };
 
   showModal = (title, id, start, end) => {
@@ -166,46 +207,47 @@ class MyCalendar extends React.Component {
       modalTitle: title,
       eventId: id,
       eventStart: start,
-      eventEnd: end
+      eventEnd: end,
     });
   };
 
-  handleCancel = e => {
+  handleCancel = (e) => {
     this.setState({
-      modalVisibility: false
+      modalVisibility: false,
     });
   };
 
-  handleDelete = e => {
+  handleDelete = (e) => {
     console.log(e);
     const { eventId } = this.state;
     this.setState({
-      modalVisibility: false
+      modalVisibility: false,
     });
     this.deleteEvent(eventId);
   };
 
   deleteEvent(id) {
     const { events } = this.state;
-    const newEvents = events.filter(event => event.id !== id);
+    const newEvents = events.filter((event) => event.id !== id);
     this.setState({
-      events: newEvents
+      events: newEvents,
     });
     this.callAPIdeleteEvent(id);
+    this.runServerStatusInterval();
   }
 
-  handleSave = e => {
+  handleSave = (e) => {
     const { eventId, modalTitle, eventStart, eventEnd } = this.state;
     console.log(e);
 
     const filteredEvents = this.state.events.filter(
-      event => event.id !== eventId
+      (event) => event.id !== eventId
     );
     const newEvent = {
       id: eventId,
       title: modalTitle,
       start: eventStart,
-      end: eventEnd
+      end: eventEnd,
     };
     filteredEvents.push(newEvent);
 
@@ -213,6 +255,7 @@ class MyCalendar extends React.Component {
     const unixEnd = this.setTimeToUnix(eventEnd);
     if (unixStart < unixEnd && modalTitle !== "") {
       this.callAPIUpdateEvent(eventId, modalTitle, unixStart, unixEnd);
+      this.runServerStatusInterval();
 
       this.setState({
         events: filteredEvents,
@@ -220,7 +263,7 @@ class MyCalendar extends React.Component {
         modalTitle: "",
         eventId: "",
         eventStart: new Date(2019, 19, 2, 18, 0),
-        eventEnd: new Date(2019, 19, 2, 19, 0)
+        eventEnd: new Date(2019, 19, 2, 19, 0),
       });
     } else {
       alert(
@@ -245,13 +288,13 @@ class MyCalendar extends React.Component {
     this.setState({ modalTitle: title });
   }
 
-  onStartTimePickerChange = time => {
+  onStartTimePickerChange = (time) => {
     var timeStamp = new Date(time);
     console.log("on time picker " + timeStamp);
     this.setState({ eventStart: timeStamp });
   };
 
-  onEndTimePickerChange = time => {
+  onEndTimePickerChange = (time) => {
     var timeStamp = new Date(time);
     console.log("on time picker " + timeStamp);
     this.setState({ eventEnd: timeStamp });
@@ -265,14 +308,13 @@ class MyCalendar extends React.Component {
   render() {
     const localizer = momentLocalizer(moment);
 
-    const { eventId, modalTitle, eventStart, eventEnd } = this.state;
-    const item = { eventId, modalTitle, eventStart, eventEnd };
-    console.log(item);
+    const { eventId, modalTitle, eventStart, eventEnd, isLoading } = this.state;
+
     return (
       <div id="scheduler-comp">
         <Row>
-          <Col span={10}></Col>
-          <Col span={8}></Col>
+          <Col span={11}></Col>
+          <Col span={7}></Col>
           <Col span={2}>
             <Button type="primary" style={{ width: "100%" }}>
               <Link to="/home">Back</Link>
@@ -301,7 +343,7 @@ class MyCalendar extends React.Component {
           defaultView={Views.WEEK}
           scrollToTime={new Date(1970, 1, 1, 6)}
           defaultDate={new Date(2015, 3, 12)}
-          onSelectEvent={event =>
+          onSelectEvent={(event) =>
             this.showModal(event.title, event.id, event.start, event.end)
           }
           onSelectSlot={this.handleSelect}
@@ -310,7 +352,7 @@ class MyCalendar extends React.Component {
           <Modal
             title="Sastanak"
             visible={this.state.modalVisibility}
-            key={this.state.eventId}
+            key={eventId}
             centered={true}
             onCancel={this.handleCancel}
             footer={[
@@ -319,11 +361,12 @@ class MyCalendar extends React.Component {
               </Button>,
               <Button key="submit" type="primary" onClick={this.handleSave}>
                 Spremi
-              </Button>
+              </Button>,
             ]}
           >
             <Row>
-              <Col span={8}>Ime tvrtke:</Col>
+              <Col span={11}>Ime tvrtke:</Col>
+
               <Input
                 id="modal-input"
                 defaultValue={modalTitle}
@@ -368,6 +411,7 @@ class MyCalendar extends React.Component {
             </Row>
           </Modal>
         </div>
+        {isLoading ? <LoadingMessage visible={true} /> : null}
       </div>
     );
   }
